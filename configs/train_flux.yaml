@@ -1,0 +1,42 @@
+# Fields mirror src.flux.config.TrainingConfig.
+model_name: "FLUX.1-dev"
+output_root: "outputs/train"
+mixed_precision: "bf16"
+
+dataset: "coco-100"
+prompts_file: "data/train/val2014_N100.jsonl"
+train_batch_size: 1
+dataloader_num_workers: 4
+
+loss: "mse"
+gradient_accumulation_steps: 8
+optimizer: "adamw"
+weight_decay: 1.0e-4
+max_grad_norm: 1.0
+
+learning_rate: 5.0e-4
+lr_scheduler_type: "cosine"
+lr_warmup_ratio: 0.05
+lr_num_cycles: 1
+lr_power: 1.0
+
+max_train_steps: null
+num_train_epochs: 1
+ckpt_save_steps: 64
+visual_steps: 32
+
+height: 1024
+width: 1024
+scheduler_mu: 1.15
+guidance_scale: 3.5
+teacher_steps: 28
+student_steps: 28
+student_nfe: 10
+
+use_traj_loss: false
+sigmas_learn_mode: "ld3"
+sigmas_optimize_range: "all"
+sigmas_resume_path: null
+sigmas_init_mode: "flux"
+init_cache_mode: "stage1"
+stage1_cacheStep: "outputs/search/<flux-stage1-cache-step>.pt"

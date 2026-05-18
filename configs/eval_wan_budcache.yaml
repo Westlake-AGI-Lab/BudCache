@@ -1,0 +1,19 @@
+# Fields mirror src.wan.config.WanInferenceConfig.
+# Pass BudCache checkpoint with: --stage1-ckpt <path>
+# Optionally pass learned sigmas with: --stage2-ckpt <path>
+task: "t2v-1.3B"
+model_name: "wan2.1-t2v-1.3B"
+output_root: "outputs/eval"
+
+size: "832*480"
+frame_num: 81
+seed: 42
+steps: 50
+solver: "euler"
+shift: 5.0
+guidance_scale: 5.0
+offload_model: true
+
+dataset_path: "data/eval/video_prompt_100.txt"
+dataset_name: "gptPrompt100"
+samples_per_prompt: 1

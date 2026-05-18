@@ -1,0 +1,19 @@
+# Fields mirror src.flux.config.SearchConfig.
+model_name: "FLUX.1-dev"
+output_root: "outputs/search"
+
+height: 1024
+width: 1024
+steps: 28
+guidance_scale: 3.5
+seed: 42
+weight_dtype: "bf16"
+prompts:
+  - "A cinematic photo of a corgi wearing sunglasses on a beach."
+
+nfe: 10
+stage0_multiStart: 1
+stage1_sa_iters: 200
+stage1_sa_t_max: 0.05
+stage1_sa_t_min: 1.0e-5
+stage2_hc_iters: 20

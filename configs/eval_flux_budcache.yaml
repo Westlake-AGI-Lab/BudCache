@@ -1,0 +1,16 @@
+# Fields mirror src.flux.config.FluxInferenceConfig.
+# Pass BudCache checkpoint with: --stage1-ckpt <path>
+# Optionally pass learned sigmas with: --stage2-ckpt <path>
+model_name: "FLUX.1-dev"
+dataset_name: "drawbench"
+dataset_path: "data/eval/drawbench.txt"
+output_root: "outputs/eval"
+
+height: 1024
+width: 1024
+steps: 28
+guidance_scale: 3.5
+seed: 42
+batch_size: 1
+samples_per_prompt: 1
+use_hypersd: false

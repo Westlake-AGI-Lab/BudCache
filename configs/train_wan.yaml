@@ -1,0 +1,41 @@
+# Fields mirror src.wan.config.WanTrainingConfig.
+task: "t2v-1.3B"
+model_name: "wan2.1-t2v-1.3B"
+output_root: "outputs/train"
+mixed_precision: "bf16"
+seed: 42
+
+dataset: "video200"
+prompts_file: "data/train/video_prompt_200.txt"
+train_batch_size: 1
+dataloader_num_workers: 4
+t5_cpu: true
+
+loss: "mse"
+gradient_accumulation_steps: 1
+optimizer: "adamw"
+weight_decay: 1.0e-6
+max_grad_norm: 0.2
+
+learning_rate: 5.0e-4
+lr_scheduler_type: "cosine"
+lr_warmup_ratio: 0.05
+lr_num_cycles: 1
+lr_power: 1.0
+
+max_train_steps: null
+num_train_epochs: 1
+ckpt_save_steps: 64
+visual_steps: 0
+
+size: "832*480"
+frame_num: 81
+shift: 5.0
+guidance_scale: 5.0
+teacher_steps: 50
+student_steps: 50
+cache_step_path: "outputs/search/<wan-stage1-cache-step>.pt"
+
+sigmas_init_mode: "wan"
+sigmas_resume_path: null
+desc: "basic"
