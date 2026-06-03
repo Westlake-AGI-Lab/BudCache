@@ -2,11 +2,11 @@
 
 # Budget-Constrained Step-Level Diffusion Caching
 
-The paper and additional release materials will be released later this week.
+The additional release materials will be released later.
 
-Mingkun Lei<sup>1</sup>, Tong Zhao<sup>1,2</sup>, Liangyu Yuan<sup>1</sup>, Chi Zhang<sup>1</sup>
+Mingkun Lei<sup>1</sup>, Tong Zhao<sup>1</sup>, Liangyu Yuan<sup>1</sup>, Chi Zhang<sup>1</sup>
 
-<sup>1</sup>AGI Lab, Westlake University, <sup>2</sup>Zhejiang University
+<sup>1</sup>AGI Lab, Westlake University
 
 Accepted by ICML 2026
 
@@ -234,6 +234,7 @@ Important evaluation fields:
 If you use this code, please cite:
 
 ```bibtex
+
 ```
 
 ## Acknowledgements
