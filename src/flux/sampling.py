@@ -10,6 +10,7 @@ from einops import rearrange, repeat
 from PIL import Image
 from torch import Tensor
 
+
 def get_noise(
     num_samples: int,
     height: int,
@@ -28,6 +29,7 @@ def get_noise(
         generator=torch.Generator(device="cpu").manual_seed(seed),
     ).to(device)
     
+
 def prepare(img: Tensor, prompt: str | list[str], guidance, clip_encoder, t5_encoder, clip_tokenizer, t5_tokenizer) -> dict[str, Tensor]:
     bs, c, h, w = img.shape
     device = img.device
@@ -66,15 +68,20 @@ def prepare(img: Tensor, prompt: str | list[str], guidance, clip_encoder, t5_enc
         "pooled_prompt_embeds": pooled_prompt_embeds,
         "guidance": guidance,
     }
-    
+
+
 def time_shift(mu: float, sigma: float, t: Tensor):
     return math.exp(mu) / (math.exp(mu) + (1 / t - 1) ** sigma)   
+
+
 def get_lin_function(
     x1: float = 256, y1: float = 0.5, x2: float = 4096, y2: float = 1.15
 ) -> Callable[[float], float]:
     m = (y2 - y1) / (x2 - x1)
     b = y1 - m * x1
     return lambda x: m * x + b
+
+
 def get_schedule(
     num_steps: int,
     image_seq_len: int,
@@ -90,6 +97,7 @@ def get_schedule(
         mu = get_lin_function(y1=base_shift, y2=max_shift)(image_seq_len)
         timesteps = time_shift(mu, 1.0, timesteps)
     return timesteps.tolist()
+
 
 def denoising_euler(
     transformer, latents, sigmas, guidance,
@@ -110,6 +118,7 @@ def denoising_euler(
         )[0]
         latents = latents + (sigma_next-sigma_k)*v
     return latents
+
 
 def denoising_ipndm2(
     transformer, latents, sigmas, guidance,
@@ -139,6 +148,7 @@ def denoising_ipndm2(
         prev_v = v
     return latents
 
+
 def _flow_lambda(sigma: float, device: torch.device) -> torch.Tensor:
     # Flow matching parameterization uses:
     #   x_t = (1 - sigma_t) * x0 + sigma_t * eps
@@ -146,6 +156,7 @@ def _flow_lambda(sigma: float, device: torch.device) -> torch.Tensor:
     sigma_t = torch.tensor(sigma, device=device, dtype=torch.float32).clamp(1e-12, 1 - 1e-12)
     alpha_t = 1.0 - sigma_t
     return torch.log(alpha_t) - torch.log(sigma_t)
+
 
 def denoising_dpmpp2m(
     transformer, latents, sigmas, guidance,
@@ -207,6 +218,7 @@ def denoising_dpmpp2m(
         prev_x0 = x0
     return latents
 
+
 def unpack(x: Tensor, height: int, width: int) -> Tensor:
     return rearrange(
         x,
@@ -216,6 +228,7 @@ def unpack(x: Tensor, height: int, width: int) -> Tensor:
         ph=2,
         pw=2,
     )
+
 
 def vae_decode(latents, vae, image_processor,):
     latents = (latents / vae.config.scaling_factor) + vae.config.shift_factor

@@ -4,6 +4,7 @@ from diffusers.utils import is_torch_version, USE_PEFT_BACKEND, scale_lora_layer
 from diffusers.models.modeling_outputs import Transformer2DModelOutput
 from typing import Optional, Dict, Any, Union
 
+
 class FluxRunner(nn.Module):
     def __init__(self, transformer, learn_sigmas):
         super().__init__()
@@ -111,6 +112,7 @@ class FluxRunner(nn.Module):
             if return_traj: trajectory.append(x)
         return trajectory if return_traj else x
 
+
 ####### Learnable Parameters ######
 """
 Trainable timestep schedulers initialized from a standard inference schedule.
@@ -159,6 +161,8 @@ class LearnableSigmasV2_offset(nn.Module):
     def forward(self):
         offset = torch.tanh(self.delta_logits) * self.bound
         return self.base + offset * self.mask
+
+
 class LearnableSigmasV2(nn.Module):
     def __init__(self, steps: int, init_sigmas: torch.Tensor, cache_step: list):
         super().__init__()
@@ -185,12 +189,15 @@ class LearnableSigmasV2(nn.Module):
                 gaps = weights * total_drop
                 out[s+1 : e] = self.base[s] - torch.cumsum(gaps, dim=0)[:-1]
         return out
+
+
 def get_segments(steps, cache_indices):
     """Return fixed compute-step indices used to split trainable segments."""
     all_indices = set(range(steps + 1))
     cache_set = set(cache_indices)
     compute_indices = sorted(list((all_indices - cache_set) | {0, steps}))
     return compute_indices
+
 
 def invert_sigmas_to_params(
     given_sigmas: torch.Tensor,

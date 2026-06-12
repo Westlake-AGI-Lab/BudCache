@@ -17,6 +17,8 @@ FLUX_LORA_REGISTRY = {
         "default_steps": 8,
     },
 }
+
+
 @dataclass
 class FluxInferenceConfig:
     model_name: str = "black-forest-labs/FLUX.1-dev"
@@ -54,6 +56,8 @@ class SearchConfig:
     stage1_sa_t_max: float = 0.05
     stage1_sa_t_min: float = 1e-5
     stage2_hc_iters: int = 20
+
+
 @dataclass
 class TrainingConfig:
     # basic — model resolved as MODEL_ROOT + model_name; run dir under output_root

@@ -2,15 +2,13 @@
 
 # Budget-Constrained Step-Level Diffusion Caching
 
-The additional release materials will be released later.
-
 Mingkun Lei<sup>1</sup>, Tong Zhao<sup>1</sup>, Liangyu Yuan<sup>1</sup>, Chi Zhang<sup>1</sup>
 
 <sup>1</sup>AGI Lab, Westlake University
 
 Accepted by ICML 2026
 
-<img src="assets/repo_teaser.png" width="100%">
+<a href='https://arxiv.org/abs/2606.13496'><img src='https://img.shields.io/badge/ArXiv-2606.13496-red'></a>
 
 </div>
 
@@ -234,7 +232,15 @@ Important evaluation fields:
 If you use this code, please cite:
 
 ```bibtex
-
+@misc{lei2026budcache,
+      title={Budget-Constrained Step-Level Diffusion Caching}, 
+      author={Mingkun Lei and Tong Zhao and Liangyu Yuan and Chi Zhang},
+      year={2026},
+      eprint={2606.13496},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2606.13496}, 
+}
 ```
 
 ## Acknowledgements
