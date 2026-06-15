@@ -30,6 +30,30 @@ def load_config(path: str) -> FluxInferenceConfig:
     return FluxInferenceConfig(**raw)
 
 
+def load_learned_sigmas(ckpt_path: str, steps: int) -> tuple[list[float], list[int] | None]:
+    """Load the stage2 learned schedule produced by stage2_train_schedule_flux.py.
+
+    The checkpoint stores ``learned_sigmas`` as the full schedule of length
+    ``student_steps + 1`` (it includes the trailing zero). ``denoising_euler``
+    runs ``len(sigmas) - 1`` integration steps and consumes each sigma as a scalar
+    fill, so we return a ``list[float]`` of length ``steps + 1`` unchanged.
+    """
+    checkpoint = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+    if "learned_sigmas" not in checkpoint:
+        raise KeyError(f"Missing `learned_sigmas` in checkpoint: {ckpt_path}")
+    sigmas = checkpoint["learned_sigmas"]
+    if isinstance(sigmas, torch.Tensor):
+        sigmas = sigmas.detach().to(torch.float32).cpu().flatten()
+    else:
+        sigmas = torch.tensor(sigmas, dtype=torch.float32).flatten()
+    if len(sigmas) != int(steps) + 1:
+        raise ValueError(f"Expected {int(steps) + 1} learned sigmas, got {len(sigmas)}")
+    cache_step = checkpoint.get("cache_step")
+    if cache_step is not None:
+        cache_step = sorted({int(step) for step in cache_step if 0 <= int(step) < int(steps)})
+    return sigmas.tolist(), cache_step
+
+
 class PromptDataset(Dataset):
     def __init__(self, prompts):
         self.prompts = prompts
@@ -62,7 +86,8 @@ def is_main_process():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True, help="YAML file path")
-    parser.add_argument("--stage1-ckpt", type=str, required=True, help="Stage1 BudCache checkpoint")
+    parser.add_argument("--stage1-ckpt", type=str, required=True, help="Stage1 BudCache checkpoint (cache_step)")
+    parser.add_argument("--stage2-ckpt", type=str, default="", help="Stage2 BudCache checkpoint (learned_sigmas, optional)")
     args = parser.parse_args()
     cfg = load_config(args.config)
 
@@ -77,15 +102,21 @@ def main():
     output_root = os.path.join(cfg.output_root, make_eval_exp_name_flux(cfg), os.environ["RUN_ID"])
     samples_dir = os.path.join(output_root, "samples")
 
-    # === checkpoint ===
+    # === checkpoints ===
     budcache_step = torch.load(args.stage1_ckpt, map_location="cpu")["cache_step"]
     nfe = int(cfg.steps) - len(budcache_step)
+    learned_sigmas = None
+    if args.stage2_ckpt:
+        learned_sigmas, stage2_cache_step = load_learned_sigmas(args.stage2_ckpt, int(cfg.steps))
+        if stage2_cache_step is not None and sorted(stage2_cache_step) != sorted(budcache_step):
+            raise ValueError("Stage2 checkpoint cache_step does not match stage1 checkpoint.")
 
-    # === stage 1: output dir + logger ready before any heavy work ===
+    # === stage 1: output dir + logger ===
     if is_main_process():
         os.makedirs(samples_dir, exist_ok=True)
         save_cfg = asdict(cfg)
         save_cfg["stage1_ckpt"] = args.stage1_ckpt
+        save_cfg["stage2_ckpt"] = args.stage2_ckpt
         with open(os.path.join(output_root, "00_run_config.yaml"), "w", encoding="utf-8") as f:
             yaml.safe_dump(save_cfg, f, sort_keys=False, allow_unicode=True)
     dist.barrier(device_ids=[local_rank])
@@ -94,7 +125,10 @@ def main():
     logger.info(f"Output: {output_root}")
     logger.info(f"Config: {args.config}")
     logger.info(f"Stage1 ckpt: {args.stage1_ckpt}")
+    if args.stage2_ckpt:
+        logger.info(f"Stage2 ckpt: {args.stage2_ckpt}")
     logger.info(f"NFE: {nfe} (cache={len(budcache_step)}/{cfg.steps})")
+    logger.info(f"Schedule: {'stage2 learned_sigmas' if learned_sigmas is not None else 'get_schedule'}")
     logger.info("Loading pipeline...")
 
     # === stage 2: prep environment — pipeline ===
@@ -129,7 +163,10 @@ def main():
     )
 
     image_seq_len = (cfg.height // 16 * 2) * (cfg.width // 16 * 2) // 4
-    sigmas = get_schedule(int(cfg.steps), image_seq_len=image_seq_len)
+    if learned_sigmas is not None:
+        sigmas = learned_sigmas
+    else:
+        sigmas = get_schedule(int(cfg.steps), image_seq_len=image_seq_len)
 
     for indices, prompts in loader:
         current_batch_size = len(prompts)

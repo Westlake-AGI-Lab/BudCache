@@ -373,6 +373,7 @@ def denoising_search(
         transformer.cache_step = cache_step
         transformer.budcache_cnt = 0
         transformer.previous_residual = None
+        transformer.num_steps = len(sigmas) - 1
 
     x = latents
     for k in range(len(sigmas)-1):

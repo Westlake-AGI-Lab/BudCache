@@ -8,7 +8,8 @@ Mingkun Lei<sup>1</sup>, Tong Zhao<sup>1</sup>, Liangyu Yuan<sup>1</sup>, Chi Zh
 
 Accepted by ICML 2026
 
-<a href='https://arxiv.org/abs/2606.13496'><img src='https://img.shields.io/badge/ArXiv-2606.13496-red'></a>
+<a href='https://arxiv.org/abs/2606.13496'><img src='https://img.shields.io/badge/Paper%20(arXiv)-2606.13496-red?logo=arxiv'></a>  &nbsp;
+<a href='https://huggingface.co/Leimingkun/BudCache/tree/main'><img src='https://img.shields.io/badge/Model-blue?logo=huggingface&logoColor='></a> &nbsp;
 
 </div>
 
@@ -18,7 +19,7 @@ BudCache is a budget-constrained step-level caching method for accelerating diff
 
 This repository contains the reference implementation used for our paper. The current release supports two model families:
 
-- FLUX
+- FLUX.1-dev
 - Wan2.1
 
 The method is organized as a two-stage pipeline.

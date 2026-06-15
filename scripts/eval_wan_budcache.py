@@ -121,7 +121,7 @@ def main():
         if stage2_cache_step is not None and stage2_cache_step != cache_step:
             raise ValueError("Stage2 checkpoint cache_step does not match stage1 checkpoint.")
 
-    # === stage 1: output dir + logger ready before any heavy work ===
+    # === stage 1: output dir + logger ===
     if is_main_process():
         os.makedirs(samples_dir, exist_ok=True)
         os.makedirs(preview_dir, exist_ok=True)

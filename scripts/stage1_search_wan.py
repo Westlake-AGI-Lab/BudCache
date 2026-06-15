@@ -28,6 +28,7 @@ def load_config(path: str) -> WanSearchConfig:
         raise TypeError(f"Expected a mapping config at {path}, got {type(raw).__name__}")
     return WanSearchConfig(**raw)
 
+
 def calc_mse(t1, t2):
     if isinstance(t1, list):
         t1 = t1[0] if len(t1) == 1 else torch.stack(t1)
@@ -52,6 +53,7 @@ def get_latents(pipe, cfg: WanSearchConfig):
         offload_model=cfg.offload_model,
     )
 
+
 def mutate_schedule(schedule: List[int]) -> List[int]:
     new_schedule = copy.deepcopy(schedule)
     ones = [i for i, x in enumerate(new_schedule) if x == 1]
@@ -67,6 +69,8 @@ def mutate_schedule(schedule: List[int]) -> List[int]:
     new_schedule[random.choice(mutable_ones)] = 0
     new_schedule[random.choice(valid_zeros)] = 1
     return new_schedule
+
+
 def get_swap_neighbors(schedule: List[int], num_neighbors: int = 20, window_size: int = 3) -> List[List[int]]:
     ones = [i for i, x in enumerate(schedule) if x == 1]
     zeros = [i for i, x in enumerate(schedule) if x == 0]
@@ -102,6 +106,7 @@ def get_swap_neighbors(schedule: List[int], num_neighbors: int = 20, window_size
         new_sched[idx_0] = 1
         neighbors.append(new_sched)
     return neighbors
+
 
 def main():
     parser = argparse.ArgumentParser()
