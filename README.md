@@ -17,12 +17,17 @@ Accepted by ICML 2026
 
 BudCache is a budget-constrained step-level caching method for accelerating diffusion generation. The goal is simple: given a fixed number of function evaluations (NFE), decide which denoising steps should run the model and which steps can reuse cached residuals, while preserving generation quality as much as possible.
 
-This repository contains the reference implementation used for our paper. The current release supports two model families:
+This repository contains the reference implementation used for our paper. The current release supports these model families:
 
 - FLUX.1-dev
 - Wan2.1
+- Z-Image
 
 The method is organized as a two-stage pipeline.
+
+## News
+
+- *2026.06.18*: Added Z-Image support.
 
 ## Method
 
@@ -246,7 +251,7 @@ If you use this code, please cite:
 
 ## Acknowledgements
 
-We thank the [FLUX.1-dev](https://github.com/black-forest-labs/flux) and [Wan2.1](https://github.com/Wan-Video/Wan2.1) teams and communities for making their models and tooling available. We are also grateful to the authors of prior work on diffusion caching and acceleration; this project builds on insights and resources from the broader research and open-source communities.
+We thank the [FLUX.1-dev](https://github.com/black-forest-labs/flux), [Wan2.1](https://github.com/Wan-Video/Wan2.1) and [Z-Image](https://github.com/Tongyi-MAI/Z-Image) teams and communities for making their models and tooling available. We are also grateful to the authors of prior work on diffusion caching and acceleration; this project builds on insights and resources from the broader research and open-source communities.
 
 ## Limitations
 

@@ -2,6 +2,7 @@
 set -euo pipefail
 
 export TOKENIZERS_PARALLELISM=false
+# TODO: Set MODEL_ROOT to the directory containing the model (e.g., export MODEL_ROOT=/path/to/models)
 export RUN_ID=$(date +%Y%m%d_%H%M%S)${SLURM_JOB_ID:+_job$SLURM_JOB_ID}${SUFFIX:+_$SUFFIX}
 
 CONFIG=${CONFIG:-configs/eval_wan_budcache.yaml}

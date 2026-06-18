@@ -1,0 +1,18 @@
+# Fields mirror src.zimage.config.ZImageInferenceConfig.
+# Pass the BudCache (Stage 1) checkpoint with: --stage1-ckpt <path>
+# Z-Image (base, NOT Turbo): CFG on (guidance > 1); the flow-match shift (6.0) is read from
+# the model's own scheduler. Keep steps/guidance identical to the search config so the cache
+# schedule found in Stage 1 matches the eval denoise loop.
+model_name: "Z-Image"
+dataset_name: "drawbench"
+dataset_path: "data/eval/drawbench.txt"
+output_root: "outputs/eval"
+
+height: 1024
+width: 1024
+steps: 50
+guidance_scale: 4.0          # base Z-Image: 3.0-5.0 turns CFG on (Turbo would use 0.0)
+seed: 42
+batch_size: 2
+samples_per_prompt: 1
+max_sequence_length: 512

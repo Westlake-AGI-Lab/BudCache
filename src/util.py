@@ -135,6 +135,38 @@ def make_train_exp_name_wan(cfg) -> str:
     return "_".join(tokens)
 
 
+def make_eval_exp_name_zimage(cfg) -> str:
+    """*evaluation* Deterministic experiment name for Z-Image sampling.
+
+    model_name is kept in the name so Z-Image (base, CFG on) and Z-Image-Turbo runs land in
+    separate output dirs."""
+    res_str = str(cfg.width) if cfg.height == cfg.width else f"{cfg.width}x{cfg.height}"
+    tokens = [
+        _format_slugify(cfg.model_name),
+        _format_slugify(cfg.dataset_name),
+        f"steps{cfg.steps}",
+        f"cfg{_format_slugify(cfg.guidance_scale)}",
+        f"res{res_str}",
+        f"seed{cfg.seed}",
+    ]
+    return "_".join(tokens)
+
+
+def make_search_exp_name_zimage(cfg, prompt_hash: str) -> str:
+    """*search* Deterministic experiment name for Z-Image cache-step search."""
+    tokens = [
+        "zimage-search",
+        _format_slugify(cfg.model_name),
+        f"h{prompt_hash}",
+        f"steps{cfg.steps}",
+        f"nfe{cfg.nfe}",
+        f"rs{cfg.stage0_multiStart}",
+        f"sa{cfg.stage1_sa_iters}",
+        f"hc{cfg.stage2_hc_iters}",
+    ]
+    return "_".join(tokens)
+
+
 ######## log ########
 def create_logger(logging_dir, rank=0, name="research", filename="00_run_info.log", level=logging.INFO):
     logger = logging.getLogger(name)
@@ -205,3 +237,28 @@ def create_comparison_grid(
             x_offset = col_idx * (width + gap)
             canvas.paste(frame, (x_offset, y_offset))
     return canvas
+
+
+def save_image_grid(
+    images: List[Image.Image],
+    path: str,
+    gap: int = 5,
+    bg_color: tuple[int, int, int] = (255, 255, 255),
+) -> None:
+    """Concatenate PIL images side-by-side into one row and save to `path`.
+
+    Used by the BudCache image evals to place each strategy (e.g. full | budcache) next to
+    each other for the same prompt/sample, so quality differences are easy to eyeball. Images
+    may differ in size; each is pasted at its own width and the row height is the tallest one.
+    """
+    images = [im.convert("RGB") for im in images if im is not None]
+    if not images:
+        return
+    row_width = sum(im.width for im in images) + gap * (len(images) - 1)
+    row_height = max(im.height for im in images)
+    canvas = Image.new("RGB", (row_width, row_height), bg_color)
+    x_offset = 0
+    for im in images:
+        canvas.paste(im, (x_offset, 0))
+        x_offset += im.width + gap
+    canvas.save(path)
