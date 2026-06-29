@@ -1,4 +1,3 @@
-# Fields mirror src.wan.config.WanInferenceConfig.
 # Pass BudCache checkpoint with: --stage1-ckpt <path>
 # Optionally pass learned sigmas with: --stage2-ckpt <path>
 task: "t2v-1.3B"

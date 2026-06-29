@@ -1,4 +1,3 @@
-# Fields mirror src.wan.config.WanSearchConfig.
 task: "t2v-1.3B"
 model_name: "wan2.1-t2v-1.3B"
 output_root: "outputs/search"

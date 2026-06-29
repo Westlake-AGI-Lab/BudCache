@@ -1,19 +1,19 @@
-model_name: "Z-Image"
+model_name: "Z-Image-Turbo"
 output_root: "outputs/search"
 weight_dtype: "bf16"
 
 height: 1024
 width: 1024
-steps: 50
-guidance_scale: 4.0          # base Z-Image: 3.0-5.0 turns CFG on (Turbo would use 0.0)
+steps: 8
+guidance_scale: 0.0          # base Z-Image: 3.0-5.0 turns CFG on (Turbo would use 0.0)
 seed: 42
 max_sequence_length: 512
 prompts:
   - "A cinematic photo of a corgi wearing sunglasses on a beach."
 
-nfe: 10
+nfe: 4
 stage0_multiStart: 1
-stage1_sa_iters: 200
+stage1_sa_iters: 2
 stage1_sa_t_max: 0.05
 stage1_sa_t_min: 1.0e-5
-stage2_hc_iters: 5
+stage2_hc_iters: 1

@@ -86,7 +86,7 @@ def main():
     output_dir = os.path.join(cfg.output_root, make_search_exp_name_zimage(cfg, prompt_hash), os.environ["RUN_ID"])
     os.makedirs(output_dir, exist_ok=True)
     history_save_path = os.path.join(output_dir, f"searchHistory_{cfg.steps}nfe{cfg.nfe}.pt")
-    final_save_path = os.path.join(output_dir, f"zimage_{cfg.steps}nfe{cfg.nfe}_h{prompt_hash}.pt")
+    final_save_path = os.path.join(output_dir, f"{cfg.model_name}_{cfg.steps}nfe{cfg.nfe}_h{prompt_hash}.pt")
 
     # Create logger
     logger = create_logger(output_dir, name=f"{cfg.model_name}-search")

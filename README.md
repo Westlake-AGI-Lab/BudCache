@@ -21,15 +21,16 @@ This repository contains the reference implementation used for our paper. The cu
 
 - FLUX.1-dev
 - Wan2.1
-- Z-Image
+- Z-Image & Z-Image-Turbo
 
 The method is organized as a two-stage pipeline.
 
 ## News
 
 - *2026.06.18*: Added Z-Image support.
+- *2026.06.29*: Added Z-Image-Turbo support.
 
-## Method
+## Overview of the Method
 
 ### Stage 1: Cache-step search
 
@@ -110,9 +111,11 @@ data/eval/
 
 Stage 1 produces a checkpoint containing the selected cache steps. This checkpoint is the main artifact used by evaluation and optional Stage 2 training.
 
+The output is written under `outputs/search/`. The saved checkpoint contains a `cache_step` list.
+
 ### FLUX
 
-Edit `configs/search_flux.yaml` to set the resolution, total denoising steps, target `nfe`, and search budget.
+Edit `configs/search_flux.yaml` to set the resolution, total denoising steps, target `nfe`(search budget).
 
 Run:
 
@@ -120,11 +123,9 @@ Run:
 bash launchers/search_flux.sh
 ```
 
-The output is written under `outputs/search/`. The saved checkpoint contains a `cache_step` list.
-
 ### Wan2.1
 
-Edit `configs/search_wan.yaml` to set the Wan task, resolution, frame count, total steps, target `nfe`, and search budget.
+Edit `configs/search_wan.yaml` to set the Wan task, resolution, frame count, total steps, target `nfe`(search budget).
 
 Run:
 
@@ -132,7 +133,16 @@ Run:
 bash launchers/search_wan.sh
 ```
 
-The output is written under `outputs/search/`.
+### Z-Image & Z-Image-Turbo
+
+Edit `configs/search_zimage.yaml or configs/search_zimage_turbo.yaml` to set the target `nfe`(search budget).
+
+Run:
+
+```bash
+bash launchers/search_zimage.sh
+bash launchers/search_zimage_turbo.sh
+```
 
 ## Stage 2 Optional Training
 
@@ -184,7 +194,7 @@ Run Wan2.1 evaluation with a Stage 1 checkpoint:
 
 ```bash
 STAGE1_CKPT=outputs/search/<stage1-run>/<checkpoint>.pt \
-GPUS_PER_NODE=1 \
+GPUS_PER_NODE=2 \
 bash launchers/sample_wan.sh
 ```
 
@@ -192,8 +202,8 @@ If you trained an optional Stage 2 schedule, pass it as:
 
 ```bash
 STAGE1_CKPT=outputs/search/<stage1-run>/<checkpoint>.pt \
-STAGE2_CKPT=outputs/train/<stage2-run>/ckpt/final.pt \
-GPUS_PER_NODE=1 \
+STAGE2_CKPT=outputs/train/<stage2run>/<ckeckpoint>.pt \
+GPUS_PER_NODE=2 \
 bash launchers/sample_wan.sh
 ```
 

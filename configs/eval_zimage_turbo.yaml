@@ -1,0 +1,13 @@
+model_name: "Z-Image-Turbo"
+dataset_name: "drawbench"
+dataset_path: "data/eval/drawbench.txt"
+output_root: "outputs/eval"
+
+height: 1024
+width: 1024
+steps: 8
+guidance_scale: 0.0          # base Z-Image: 3.0-5.0 turns CFG on (Turbo would use 0.0)
+seed: 42
+batch_size: 2
+samples_per_prompt: 1
+max_sequence_length: 512

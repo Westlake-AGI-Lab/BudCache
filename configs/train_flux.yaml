@@ -1,4 +1,3 @@
-# Fields mirror src.flux.config.TrainingConfig.
 model_name: "FLUX.1-dev"
 output_root: "outputs/train"
 mixed_precision: "bf16"
